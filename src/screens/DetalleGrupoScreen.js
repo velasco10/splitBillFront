@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
-
-const API = 'http://localhost:8000';
+import { API_URL } from '@env';
 
 function calcularSaldos(miembros, gastos) {
     const saldos = {};
@@ -31,12 +30,12 @@ export default function DetalleGrupoScreen({ route, navigation }) {
     useEffect(() => {
         async function fetchGrupoYGastos() {
             // 1. Refresca grupo
-            const resGrupo = await fetch(`${API}/grupos/${grupo._id}`);
+            const resGrupo = await fetch(`${API_URL}/grupos/${grupo._id}`);
             const dataGrupo = await resGrupo.json();
             setGrupoActual(dataGrupo);
 
             // 2. Refresca gastos
-            const resGastos = await fetch(`${API}/gastos/grupo/${grupo._id}`);
+            const resGastos = await fetch(`${API_URL}/gastos/grupo/${grupo._id}`);
             const dataGastos = await resGastos.json();
             setGastos(dataGastos);
         }

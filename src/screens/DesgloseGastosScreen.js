@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { API_URL } from '@env';
 
 export default function DesgloseGastosScreen({ route, navigation }) {
   const { grupo } = route.params;
@@ -7,7 +8,7 @@ export default function DesgloseGastosScreen({ route, navigation }) {
 
   useEffect(() => {
     async function fetchGastos() {
-      const res = await fetch(`http://localhost:8000/gastos/grupo/${grupo._id}`);
+      const res = await fetch(`${API_URL}/gastos/grupo/${grupo._id}`);
       const data = await res.json();
       setGastos(data);
     }

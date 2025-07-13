@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
+import { API_URL } from '@env';
 
 export default function NuevoGastoScreen({ route, navigation }) {
   const { grupo } = route.params;
@@ -30,7 +31,7 @@ export default function NuevoGastoScreen({ route, navigation }) {
       emisor,
       beneficiarios,
     };
-    await fetch('http://localhost:8000/gastos', {
+    await fetch(`${API_URL}/gastos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gasto),

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { API_URL } from '@env';
 
 export default function UnirseGrupoScreen({ navigation }) {
   const [codigo, setCodigo] = useState('');
 
   const buscarGrupo = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/grupos/${codigo}`);
+      const res = await fetch(`${API_URL} + /grupos/${codigo}`);
       if (!res.ok) throw new Error('No existe el grupo');
       const grupo = await res.json();
       navigation.navigate('DetalleGrupo', { grupo });

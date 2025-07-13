@@ -9,6 +9,7 @@ import DesgloseGastosScreen from './src/screens/DesgloseGastosScreen';
 import DetalleGastoScreen from './src/screens/DetalleGastoScreen';
 import UnirseGrupoScreen from './src/screens/UnirseGrupoScreen';
 import InvitarScreen from './src/screens/InvitarScreen';
+import AgregarPersonasScreen from './src/screens/AgregarPersonasScreen';
 import AgregarPersonaScreen from './src/screens/AgregarPersonaScreen';
 import CamaraScreen from './src/screens/CamaraScreen';
 import AsignarProductosScreen from './src/screens/AsignarProductosScreen';
@@ -29,6 +30,7 @@ export default function App() {
         <Stack.Screen name="UnirseGrupo" component={UnirseGrupoScreen} options={{ title: 'Unirse a grupo' }} />
         <Stack.Screen name="Invitar" component={InvitarScreen} options={{ title: 'Invitar al grupo' }} />
         <Stack.Screen name="AgregarPersona" component={AgregarPersonaScreen} options={{ title: 'Añadir persona' }} />
+        <Stack.Screen name="AgregarPersonas" component={AgregarPersonasScreen} options={{ title: 'Añadir personas' }} />
         <Stack.Screen name="CamaraScreen" component={CamaraScreen} />
         <Stack.Screen name="AsignarProductosScreen" component={AsignarProductosScreen} />
         <Stack.Screen name="TotalesPorPersona" component={TotalesPorPersona} />

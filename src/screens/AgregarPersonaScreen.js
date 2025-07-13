@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Switch, Alert } from 'react-native';
+import { API_URL } from '@env';
 
 export default function AgregarPersonaScreen({ route, navigation }) {
     const { grupo } = route.params;
@@ -9,7 +10,7 @@ export default function AgregarPersonaScreen({ route, navigation }) {
     const agregarPersona = async () => {
         try {
             // 1. Actualiza miembros en la colección grupo
-            await fetch(`http://localhost:8000/grupos/${grupo._id}`, {
+            await fetch(`${API_URL}/grupos/${grupo._id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -18,7 +19,7 @@ export default function AgregarPersonaScreen({ route, navigation }) {
             });
             // 2. Si entra en los gastos, actualiza todos los gastos de este grupo añadiendo como beneficiario
             if (entrarEnGastos) {
-                await fetch(`http://localhost:8000/gastos/grupo/${grupo._id}/agregar_beneficiario`, {
+                await fetch(`${API_URL}/gastos/grupo/${grupo._id}/agregar_beneficiario`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ beneficiario: nombre })

@@ -1,11 +1,24 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 
+const calcularTotales = (productos, personas) => {
+  const totales = {};
+  personas.forEach(nombre => totales[nombre] = 0);
+
+  productos.forEach(producto => {
+    if (producto.personas.length) {
+      const importePorPersona = producto.importe / producto.personas.length;
+      producto.personas.forEach(nombre => {
+        totales[nombre] += importePorPersona;
+      });
+    }
+  });
+  return totales;
+};
+
 export default function TotalesPorPersona({ route }) {
-  const { totalesJson } = route.params || { totalesJson: {} };
-
-  // totalesJson debe ser: { nombre1: total1, nombre2: total2, ... }
-
+  const { productos = [], personas = [] } = route.params || {};
+  const totalesJson = calcularTotales(productos, personas);
   const data = Object.entries(totalesJson);
 
   return (

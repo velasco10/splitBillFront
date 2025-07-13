@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000/grupos';
+const API_URL = API_URL + '/grupos';
 
 export async function obtenerGrupos() {
   const res = await fetch(API_URL);

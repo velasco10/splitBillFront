@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { API_URL } from '@env';
 
 export default function CrearGrupoScreen({ navigation }) {
   const [nombre, setNombre] = useState('');
@@ -21,7 +22,7 @@ export default function CrearGrupoScreen({ navigation }) {
 
   const crearGrupo = async () => {
     const grupo = { nombre, descripcion, miembros };
-    const res = await fetch('http://localhost:8000/grupos', {
+    const res = await fetch(`${API_URL}/grupos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(grupo),
