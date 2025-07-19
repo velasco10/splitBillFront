@@ -2,22 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
-import { API_URL } from '@env';
+import { API_URL } from '../../config';
 
 function calcularSaldos(miembros, gastos) {
-    const saldos = {};
-    miembros.forEach(m => saldos[m] = 0);
-    gastos.forEach(g => {
-        const parte = g.importe / g.beneficiarios.length;
-        g.beneficiarios.forEach(b => {
-            if (b !== g.emisor) {
-                saldos[b] -= parte;
-                saldos[g.emisor] += parte;
-            }
-        });
+  const saldos = {};
+  miembros.forEach(m => saldos[m] = 0);
+  
+  gastos.forEach(g => {
+    const parte = g.importe / g.beneficiarios.length;
+    g.beneficiarios.forEach(b => {
+      if (b !== g.emisor) {
+        saldos[b] -= parte;
+        saldos[g.emisor] += parte;
+      }
     });
-    return saldos;
+  });
+
+  // ✅ Arregla decimales, evita -0.00
+  for (const nombre in saldos) {
+    const redondeado = Math.round((saldos[nombre] + Number.EPSILON) * 100) / 100;
+    saldos[nombre] = redondeado === -0 ? 0 : redondeado;
+  }
+
+  return saldos;
 }
+
 
 export default function DetalleGrupoScreen({ route, navigation }) {
     const { grupo } = route.params;
@@ -115,6 +124,19 @@ export default function DetalleGrupoScreen({ route, navigation }) {
                         }}>
                         <Text>Invitar</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.fabOption}
+                        onPress={() => {
+                            setOpcionesVisibles(false);
+                            navigation.navigate('AjustarCuentas', {
+                                grupo: grupoActual,
+                                saldos,
+                            });
+                        }}
+                    >
+                        <Text>Ajustar cuentas</Text>
+                    </TouchableOpacity>
+
                 </View>
             )}
         </View>

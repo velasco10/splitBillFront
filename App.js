@@ -14,6 +14,7 @@ import AgregarPersonaScreen from './src/screens/AgregarPersonaScreen';
 import CamaraScreen from './src/screens/CamaraScreen';
 import AsignarProductosScreen from './src/screens/AsignarProductosScreen';
 import TotalesPorPersona from './src/screens/TotalesPorPersona';
+import AjustarCuentasScreen from './src/screens/AjustarCuentasScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="CamaraScreen" component={CamaraScreen} />
         <Stack.Screen name="AsignarProductosScreen" component={AsignarProductosScreen} />
         <Stack.Screen name="TotalesPorPersona" component={TotalesPorPersona} />
+        <Stack.Screen name="AjustarCuentas" component={AjustarCuentasScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

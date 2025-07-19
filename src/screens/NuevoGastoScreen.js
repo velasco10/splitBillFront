@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
-import { API_URL } from '@env';
+import { API_URL } from '../../config';
 
 export default function NuevoGastoScreen({ route, navigation }) {
   const { grupo } = route.params;

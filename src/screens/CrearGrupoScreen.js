@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { API_URL } from '@env';
+import { API_URL } from '../../config';
 
 export default function CrearGrupoScreen({ navigation }) {
   const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
   const [miembroInput, setMiembroInput] = useState('');
   const [miembros, setMiembros] = useState([]);
 
@@ -21,7 +20,7 @@ export default function CrearGrupoScreen({ navigation }) {
   };
 
   const crearGrupo = async () => {
-    const grupo = { nombre, descripcion, miembros };
+    const grupo = { nombre, miembros };
     const res = await fetch(`${API_URL}/grupos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -41,14 +40,6 @@ export default function CrearGrupoScreen({ navigation }) {
         onChangeText={setNombre}
         underlineColorAndroid="transparent"
       />
-      <TextInput
-        placeholder="Descripción"
-        style={styles.input}
-        value={descripcion}
-        onChangeText={setDescripcion}
-        underlineColorAndroid="transparent"
-      />
-
       <View style={styles.row}>
         <TextInput
           placeholder="Añadir miembro"
@@ -56,6 +47,9 @@ export default function CrearGrupoScreen({ navigation }) {
           value={miembroInput}
           onChangeText={setMiembroInput}
           underlineColorAndroid="transparent"
+          returnKeyType="done"
+          onSubmitEditing={agregarMiembro}
+          blurOnSubmit={false}
         />
         <TouchableOpacity onPress={agregarMiembro} style={styles.iconBtn}>
           <Ionicons name="add-circle-outline" size={32} color="#42a5f5" />
