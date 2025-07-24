@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { API_URL } from '../../config';
+import { API_URL } from '../config';
+import { getDeviceId } from '../utils/deviceId';
 
 export default function CrearGrupoScreen({ navigation }) {
   const [nombre, setNombre] = useState('');
@@ -20,7 +21,10 @@ export default function CrearGrupoScreen({ navigation }) {
   };
 
   const crearGrupo = async () => {
-    const grupo = { nombre, miembros };
+    console.log("Obteniendo deviceId crearGrupo...");
+    const deviceId = await getDeviceId();
+    console.log("DeviceId:", deviceId);
+    const grupo = { nombre, miembros, creadorId: deviceId };
     const res = await fetch(`${API_URL}/grupos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

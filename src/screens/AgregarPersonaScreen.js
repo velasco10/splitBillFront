@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Switch, Alert } from 'react-native';
-import { API_URL } from '../../config';
+import { API_URL } from '../config';
 
 export default function AgregarPersonaScreen({ route, navigation }) {
     const { grupo } = route.params;

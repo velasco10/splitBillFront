@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Button, ActivityIndicator, Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { API_URL } from '../../config';
+import { API_URL } from '../config';
 
 export default function CamaraScreen({ navigation }) {
 

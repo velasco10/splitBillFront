@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { API_URL } from '../../config';
+import { API_URL } from '../config';
 import { Ionicons } from '@expo/vector-icons';
 
 function simplificarPagos(saldos) {

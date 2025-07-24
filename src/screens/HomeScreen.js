@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { obtenerGrupos } from '../api/grupos';
+import { obtenerMisGrupos } from '../api/grupos';
 
 
 
@@ -13,7 +13,7 @@ export default function HomeScreen({ navigation }) {
     useEffect(() => {
         async function fetchGrupos() {
             try {
-                const data = await obtenerGrupos();
+                const data = await obtenerMisGrupos();
                 setGrupos(data);
             } catch (e) {
                 setGrupos([]);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { API_URL } from '../../config';
+import { API_URL } from '../config';
 
 export default function DesgloseGastosScreen({ route, navigation }) {
   const { grupo } = route.params;

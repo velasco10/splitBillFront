@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
-import { API_URL } from '../../config';
+import { API_URL } from '../config';
 
 function calcularSaldos(miembros, gastos) {
   const saldos = {};
