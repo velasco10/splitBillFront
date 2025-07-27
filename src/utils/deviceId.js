@@ -1,12 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
 
 export const getDeviceId = async () => {
-    let id = await AsyncStorage.getItem('device_id');
-    console.log("Leído desde AsyncStorage:", id);
+  try {
+    let id = await AsyncStorage.getItem('deviceId');
     if (!id) {
-        id = uuidv4();
-        await AsyncStorage.setItem('device_id', id);
+      id = uuid.v4(); 
+      await AsyncStorage.setItem('deviceId', id);
     }
+    console.log("deviceID", id)
     return id;
+  } catch (error) {
+    console.error('Error al obtener deviceId:', error);
+    return 'unknown-device';
+  }
 };

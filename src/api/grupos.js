@@ -4,9 +4,7 @@ import { getDeviceId } from '../utils/deviceId';
 import { obtenerGruposUnidos } from '../utils/localGroups';
 
 export const obtenerMisGrupos = async () => {
-  console.log("Obteniendo creadorId...");
   const creadorId = await getDeviceId();
-  console.log("creadorId:", creadorId);
   const unidos = await obtenerGruposUnidos();
 
   // Llamada al backend para grupos creados

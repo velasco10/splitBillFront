@@ -21,9 +21,7 @@ export default function CrearGrupoScreen({ navigation }) {
   };
 
   const crearGrupo = async () => {
-    console.log("Obteniendo deviceId crearGrupo...");
     const deviceId = await getDeviceId();
-    console.log("DeviceId:", deviceId);
     const grupo = { nombre, miembros, creadorId: deviceId };
     const res = await fetch(`${API_URL}/grupos`, {
       method: 'POST',
