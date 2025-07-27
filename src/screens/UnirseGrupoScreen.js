@@ -7,8 +7,9 @@ export default function UnirseGrupoScreen({ navigation }) {
 
   const unirseManual = () => {
     if (!codigo.trim()) return;
-    guardarGrupoUnido(grupoId)
+    guardarGrupoUnido(codigo)
     Alert.alert('Unido con código', `Te has unido con el código: ${codigo}`);
+    navigation.navigate('Home');
   };
 
   return (

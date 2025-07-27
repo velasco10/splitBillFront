@@ -3,28 +3,29 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { API_URL } from '../config';
+import { useLayoutEffect } from 'react';
 
 function calcularSaldos(miembros, gastos) {
-  const saldos = {};
-  miembros.forEach(m => saldos[m] = 0);
-  
-  gastos.forEach(g => {
-    const parte = g.importe / g.beneficiarios.length;
-    g.beneficiarios.forEach(b => {
-      if (b !== g.emisor) {
-        saldos[b] -= parte;
-        saldos[g.emisor] += parte;
-      }
+    const saldos = {};
+    miembros.forEach(m => saldos[m] = 0);
+
+    gastos.forEach(g => {
+        const parte = g.importe / g.beneficiarios.length;
+        g.beneficiarios.forEach(b => {
+            if (b !== g.emisor) {
+                saldos[b] -= parte;
+                saldos[g.emisor] += parte;
+            }
+        });
     });
-  });
 
-  // ✅ Arregla decimales, evita -0.00
-  for (const nombre in saldos) {
-    const redondeado = Math.round((saldos[nombre] + Number.EPSILON) * 100) / 100;
-    saldos[nombre] = redondeado === -0 ? 0 : redondeado;
-  }
+    // ✅ Arregla decimales, evita -0.00
+    for (const nombre in saldos) {
+        const redondeado = Math.round((saldos[nombre] + Number.EPSILON) * 100) / 100;
+        saldos[nombre] = redondeado === -0 ? 0 : redondeado;
+    }
 
-  return saldos;
+    return saldos;
 }
 
 
@@ -51,7 +52,18 @@ export default function DetalleGrupoScreen({ route, navigation }) {
 
         fetchGrupoYGastos();
     }, [isFocused, grupo._id]);
-
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Home')}
+                    style={{ paddingLeft: 16 }}
+                >
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation]);
     const saldos = calcularSaldos(grupoActual.miembros, gastos);
 
     // Prepara los datos para la tabla
