@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet }
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '../config';
 import { getDeviceId } from '../utils/deviceId';
+import {guardarGrupoUnido} from '../utils/localGroups'
 
 export default function CrearGrupoScreen({ navigation }) {
   const [nombre, setNombre] = useState('');
@@ -29,6 +30,7 @@ export default function CrearGrupoScreen({ navigation }) {
       body: JSON.stringify(grupo),
     });
     const data = await res.json();
+    await guardarGrupoUnido(data._id);
     navigation.navigate('DetalleGrupo', { grupo: data });
   };
 

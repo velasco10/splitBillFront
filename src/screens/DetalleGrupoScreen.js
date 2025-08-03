@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { API_URL } from '../config';
 import { useLayoutEffect } from 'react';
+import { salirDeGrupo } from '../utils/localGroups';
 
 function calcularSaldos(miembros, gastos) {
     const saldos = {};
@@ -147,6 +148,15 @@ export default function DetalleGrupoScreen({ route, navigation }) {
                         }}
                     >
                         <Text>Ajustar cuentas</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.fabOption}
+                        onPress={async () => {
+                            await salirDeGrupo(grupoActual._id);
+                            setOpcionesVisibles(false);
+                            navigation.navigate('Home');
+                        }}>
+                        <Text style={{ color: 'red' }}>Salir del grupo</Text>
                     </TouchableOpacity>
 
                 </View>
