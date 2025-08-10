@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { obtenerGruposUnidos } from '../utils/localGroups';
 import { useFocusEffect } from '@react-navigation/native';
 import { API_URL } from '../config';
-import { salirDeGrupo } from '../utils/localGroups';
+import { salirDeGrupo, limpiarGruposInvalidos } from '../utils/localGroups';
 
 export default function HomeScreen({ navigation }) {
     const [grupos, setGrupos] = useState([]);
@@ -22,9 +22,23 @@ export default function HomeScreen({ navigation }) {
 
     useFocusEffect(
         useCallback(() => {
-            fetchGrupos();
+            const cargar = async () => {
+                const ids = await limpiarGruposInvalidos();
+                const grupos = [];
+                for (const id of ids) {
+                    try {
+                        const r = await fetch(`${API_URL}/grupos/${id}`);
+                        if (!r.ok) continue;
+                        const g = await r.json();
+                        grupos.push(g);
+                    } catch { }
+                }
+                setGrupos(grupos);
+            };
+            cargar();
         }, [])
     );
+
 
     useEffect(() => {
         fetchGrupos();
