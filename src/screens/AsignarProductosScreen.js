@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Button } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import AppBackground from '../components/AppBackground';
 
 export default function AsignarProductosScreen({ route, navigation }) {
@@ -32,33 +32,38 @@ export default function AsignarProductosScreen({ route, navigation }) {
   };
 
   return (
-    <View style={{ flex: 1, padding: 10 }}>
-      <FlatList
-        data={lineas}
-        keyExtractor={(item, idx) => `${item.producto}-${idx}`}
-        renderItem={({ item, index }) => (
-          <View style={{ marginBottom: 20 }}>
-            <Text style={{ fontWeight: 'bold' }}>{item.producto} ({item.importe}€)</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              {personas.map(persona => (
-                <TouchableOpacity
-                  key={persona}
-                  style={{
-                    margin: 5,
-                    padding: 8,
-                    borderRadius: 20,
-                    backgroundColor: asignaciones[index].includes(persona) ? '#4caf50' : '#e0e0e0'
-                  }}
-                  onPress={() => togglePersona(index, persona)}
-                >
-                  <Text>{persona}</Text>
-                </TouchableOpacity>
-              ))}
+    <View style={styles.container}>
+      <AppBackground>
+        <FlatList
+          data={lineas}
+          keyExtractor={(item, idx) => `${item.producto}-${idx}`}
+          renderItem={({ item, index }) => (
+            <View style={{ marginBottom: 20 }}>
+              <Text style={{ fontWeight: 'bold' }}>{item.producto} ({item.importe}€)</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {personas.map(persona => (
+                  <TouchableOpacity
+                    key={persona}
+                    style={{
+                      margin: 5,
+                      padding: 8,
+                      borderRadius: 20,
+                      backgroundColor: asignaciones[index].includes(persona) ? '#4caf50' : '#e0e0e0'
+                    }}
+                    onPress={() => togglePersona(index, persona)}
+                  >
+                    <Text>{persona}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </View>
-        )}
-      />
-      <Button title="Aceptar" onPress={handleAceptar} />
+          )}
+        />
+        <Button title="Aceptar" onPress={handleAceptar} />
+      </AppBackground>
     </View>
   );
 }
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff', padding: 20 }
+});

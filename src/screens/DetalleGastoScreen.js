@@ -6,11 +6,13 @@ export default function DetalleGastoScreen({ route }) {
   const { gasto } = route.params;
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{gasto.concepto}</Text>
-      <Text>Importe: {gasto.importe} €</Text>
-      <Text>Pagó: {gasto.emisor}</Text>
-      <Text>Beneficiarios:</Text>
-      {gasto.beneficiarios.map((b, i) => <Text key={i}>- {b}</Text>)}
+      <AppBackground>
+        <Text style={styles.title}>{gasto.concepto}</Text>
+        <Text>Importe: {gasto.importe} €</Text>
+        <Text>Pagó: {gasto.emisor}</Text>
+        <Text>Beneficiarios:</Text>
+        {gasto.beneficiarios.map((b, i) => <Text key={i}>- {b}</Text>)}
+      </AppBackground>
     </View>
   );
 }

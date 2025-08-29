@@ -15,7 +15,7 @@ import CamaraScreen from './src/screens/CamaraScreen';
 import AsignarProductosScreen from './src/screens/AsignarProductosScreen';
 import TotalesPorPersona from './src/screens/TotalesPorPersona';
 import AjustarCuentasScreen from './src/screens/AjustarCuentasScreen';
-import CustomHeader from './src/components/CustomHeader'; // <-- Importa tu componente
+import CustomHeader from './src/components/CustomHeader'; 
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +24,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          header: () => <CustomHeader />, 
+          header: () => <CustomHeader />
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />

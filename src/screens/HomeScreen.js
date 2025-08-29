@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     grupoTouch: {
   flexDirection: 'row',
   alignItems: 'center',
-  flex: 1, // ocupa todo excepto el botón de salir
+  flex: 1,
 },
 
 nombreGrupo: {

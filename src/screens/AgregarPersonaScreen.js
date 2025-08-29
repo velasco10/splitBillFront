@@ -36,23 +36,23 @@ export default function AgregarPersonaScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             <AppBackground>
-            <Text style={styles.title}>Añadir persona</Text>
-            <TextInput
-                placeholder="Nombre del nuevo miembro"
-                placeholderTextColor="#6B7280"
-                style={styles.input}
-                value={nombre}
-                onChangeText={setNombre}
-            />
-            <View style={styles.switchRow}>
-                <Switch value={entrarEnGastos} onValueChange={setEntrarEnGastos} />
-                <Text style={styles.switchLabel}>¿Sumar a todos los gastos anteriores?</Text>
-            </View>
-            <Button
-                title="Añadir"
-                onPress={agregarPersona}
-                disabled={!nombre}
-            />
+                <Text style={styles.title}>Añadir persona</Text>
+                <TextInput
+                    placeholder="Nombre del nuevo miembro"
+                    placeholderTextColor="#6B7280"
+                    style={styles.input}
+                    value={nombre}
+                    onChangeText={setNombre}
+                />
+                <View style={styles.switchRow}>
+                    <Switch value={entrarEnGastos} onValueChange={setEntrarEnGastos} />
+                    <Text style={styles.switchLabel}>¿Sumar a todos los gastos anteriores?</Text>
+                </View>
+                <Button
+                    title="Añadir"
+                    onPress={agregarPersona}
+                    disabled={!nombre}
+                />
             </AppBackground>
         </View>
     );

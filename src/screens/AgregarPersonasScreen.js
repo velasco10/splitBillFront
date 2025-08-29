@@ -35,35 +35,37 @@ export default function AgregarPersonasScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Introduce los nombres de las personas:</Text>
-      <View style={styles.row}>
-        <TextInput
-          placeholder="Nombre"
-          placeholderTextColor="#6B7280"
-          style={[styles.input, { flex: 1 }]}
-          value={nombre}
-          onChangeText={setNombre}
-          returnKeyType="done"
-          onSubmitEditing={agregarPersona}
-          blurOnSubmit={false}
+      <AppBackground>
+        <Text style={styles.title}>Introduce los nombres de las personas:</Text>
+        <View style={styles.row}>
+          <TextInput
+            placeholder="Nombre"
+            placeholderTextColor="#6B7280"
+            style={[styles.input, { flex: 1 }]}
+            value={nombre}
+            onChangeText={setNombre}
+            returnKeyType="done"
+            onSubmitEditing={agregarPersona}
+            blurOnSubmit={false}
+          />
+          <TouchableOpacity onPress={agregarPersona} style={styles.iconBtn}>
+            <Ionicons name="add-circle-outline" size={32} color="#42a5f5" />
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          data={personas}
+          keyExtractor={(item, idx) => idx.toString()}
+          renderItem={({ item, index }) => (
+            <View style={styles.miembroItem}>
+              <Text>{item}</Text>
+              <TouchableOpacity onPress={() => eliminarPersona(index)}>
+                <Ionicons name="remove-circle-outline" size={28} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
         />
-        <TouchableOpacity onPress={agregarPersona} style={styles.iconBtn}>
-          <Ionicons name="add-circle-outline" size={32} color="#42a5f5" />
-        </TouchableOpacity>
-      </View>
-      <FlatList
-        data={personas}
-        keyExtractor={(item, idx) => idx.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.miembroItem}>
-            <Text>{item}</Text>
-            <TouchableOpacity onPress={() => eliminarPersona(index)}>
-              <Ionicons name="remove-circle-outline" size={28} color="red" />
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      <Button title="Continuar" onPress={continuar} disabled={personas.length === 0} />
+        <Button title="Continuar" onPress={continuar} disabled={personas.length === 0} />
+      </AppBackground>
     </View>
   );
 }

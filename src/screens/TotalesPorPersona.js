@@ -24,17 +24,18 @@ export default function TotalesPorPersona({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Totales por Persona</Text>
-      <FlatList
-        data={data}
-        keyExtractor={([nombre]) => nombre}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.nombre}>{item[0]}</Text>
-            <Text style={styles.total}>€{parseFloat(item[1]).toFixed(2)}</Text>
-          </View>
-        )}
-      />
+      <AppBackground>
+        <FlatList
+          data={data}
+          keyExtractor={([nombre]) => nombre}
+          renderItem={({ item }) => (
+            <View style={styles.item}>
+              <Text style={styles.nombre}>{item[0]}</Text>
+              <Text style={styles.total}>€{parseFloat(item[1]).toFixed(2)}</Text>
+            </View>
+          )}
+        />
+      </AppBackground>
     </View>
   );
 }
