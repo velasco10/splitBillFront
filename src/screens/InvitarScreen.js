@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Share } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
+//import QRCode from 'react-native-qrcode-svg';
 import * as Clipboard from 'expo-clipboard';
+import AppBackground from '../components/AppBackground';
 
 export default function InvitarScreen({ route }) {
   const { grupo } = route.params;
@@ -17,8 +18,8 @@ export default function InvitarScreen({ route }) {
   const compartirEnlace = async () => {
     try {
       await Share.share({
-        message: `Únete a mi grupo SplitBill con este enlace: ${enlace}`,
-        url: enlace
+        message: `Únete a mi grupo SplitBill con este codigo: ${grupo._id}`,
+        url: grupo._id
       });
     } catch (e) {
       Alert.alert('Error', 'No se pudo compartir');
@@ -27,27 +28,29 @@ export default function InvitarScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Invitar al grupo</Text>
+      <AppBackground>
+        <Text style={styles.title}>Invitar al grupo</Text>
 
-      <Text style={styles.label}>Código:</Text>
-      <View style={styles.codigoRow}>
-        <Text style={styles.codigoText}>{grupo._id}</Text>
-        <TouchableOpacity onPress={copiarCodigo} style={styles.copyBtn}>
-          <Text style={{ color: '#42a5f5', fontWeight: 'bold' }}>
-            {copiado ? '¡Copiado!' : 'Copiar'}
-          </Text>
+        <Text style={styles.label}>Código:</Text>
+        <View style={styles.codigoRow}>
+          <Text style={styles.codigoText}>{grupo._id}</Text>
+          <TouchableOpacity onPress={copiarCodigo} style={styles.copyBtn}>
+            <Text style={{ color: '#42a5f5', fontWeight: 'bold' }}>
+              {copiado ? '¡Copiado!' : 'Copiar'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.label}>Enlace:</Text>
+        <TouchableOpacity onPress={compartirEnlace}>
+          <Text style={styles.enlace}>{enlace}</Text>
+          <Text style={styles.compartirTxt}>Toca para compartir</Text>
         </TouchableOpacity>
-      </View>
 
-      <Text style={styles.label}>Enlace:</Text>
-      <TouchableOpacity onPress={compartirEnlace}>
-        <Text style={styles.enlace}>{enlace}</Text>
-        <Text style={styles.compartirTxt}>Toca para compartir</Text>
-      </TouchableOpacity>
-
-      <View style={{ marginVertical: 24 }}>
+        {/*<View style={{ marginVertical: 24 }}>
         <QRCode value={grupo._id} size={200} />
-      </View>
+      </View>*/}
+      </AppBackground>
     </View>
   );
 }

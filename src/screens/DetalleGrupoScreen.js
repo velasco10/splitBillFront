@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { API_URL } from '../config';
 import { useLayoutEffect } from 'react';
 import { salirDeGrupo } from '../utils/localGroups';
+import AppBackground from '../components/AppBackground';
 
 function calcularSaldos(miembros, gastos) {
     const saldos = {};
@@ -20,7 +21,6 @@ function calcularSaldos(miembros, gastos) {
         });
     });
 
-    // ✅ Arregla decimales, evita -0.00
     for (const nombre in saldos) {
         const redondeado = Math.round((saldos[nombre] + Number.EPSILON) * 100) / 100;
         saldos[nombre] = redondeado === -0 ? 0 : redondeado;
@@ -33,7 +33,7 @@ function calcularSaldos(miembros, gastos) {
 export default function DetalleGrupoScreen({ route, navigation }) {
     const { grupo } = route.params;
     const [gastos, setGastos] = useState([]);
-    const [grupoActual, setGrupoActual] = useState(grupo); // Estado para grupo actualizado
+    const [grupoActual, setGrupoActual] = useState(grupo); 
     const [opcionesVisibles, setOpcionesVisibles] = useState(false);
     const isFocused = useIsFocused();
 
@@ -53,18 +53,7 @@ export default function DetalleGrupoScreen({ route, navigation }) {
 
         fetchGrupoYGastos();
     }, [isFocused, grupo._id]);
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerLeft: () => (
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Home')}
-                    style={{ paddingLeft: 16 }}
-                >
-                    <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-            ),
-        });
-    }, [navigation]);
+
     const saldos = calcularSaldos(grupoActual.miembros, gastos);
 
     // Prepara los datos para la tabla
@@ -74,98 +63,103 @@ export default function DetalleGrupoScreen({ route, navigation }) {
     }));
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{grupoActual.nombre}</Text>
-            <Text style={styles.subtitle}>{grupoActual.descripcion}</Text>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <AppBackground>
+                <Text style={styles.title}>{grupoActual.nombre}</Text>
+                <Text style={styles.subtitle}>{grupoActual.descripcion}</Text>
 
-            <View style={styles.tablaHeader}>
-                <Text style={styles.tablaColNombre}>Nombre</Text>
-                <Text style={styles.tablaColImporte}>Saldo (€)</Text>
-            </View>
-            <FlatList
-                data={tablaDatos}
-                keyExtractor={item => item.nombre}
-                renderItem={({ item }) => (
-                    <View style={styles.tablaRow}>
-                        <Text style={styles.tablaColNombre}>{item.nombre}</Text>
-                        <Text style={[
-                            styles.tablaColImporte,
-                            { color: parseFloat(item.importe) < 0 ? 'red' : '#42a5f5' }
-                        ]}>{item.importe}</Text>
+                <View style={styles.tablaHeader}>
+                    <Text style={styles.tablaColNombre}>Nombre</Text>
+                    <Text style={styles.tablaColImporte}>Saldo (€)</Text>
+                </View>
+                <FlatList
+                    data={tablaDatos}
+                    keyExtractor={item => item.nombre}
+                    renderItem={({ item }) => (
+                        <View style={styles.tablaRow}>
+                            <Text style={styles.tablaColNombre}>{item.nombre}</Text>
+                            <Text style={[
+                                styles.tablaColImporte,
+                                { color: parseFloat(item.importe) < 0 ? 'red' : '#42a5f5' }
+                            ]}>{item.importe}</Text>
+                        </View>
+                    )}
+                />
+
+                {/* Botón flotante */}
+                <TouchableOpacity
+                    style={styles.fab}
+                    onPress={() => setOpcionesVisibles(!opcionesVisibles)}
+                >
+                    <Ionicons name="add" size={32} color="white" />
+                </TouchableOpacity>
+                {opcionesVisibles && (
+                    <View style={styles.fabOptions}>
+                        <TouchableOpacity
+                            style={styles.fabOption}
+                            onPress={() => {
+                                setOpcionesVisibles(false);
+                                navigation.navigate('AgregarPersona', { grupo: grupoActual });
+                            }}>
+                            <Text>Añadir persona</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.fabOption}
+                            onPress={() => {
+                                setOpcionesVisibles(false);
+                                navigation.navigate('NuevoGasto', { grupo: grupoActual });
+                            }}>
+                            <Text>Nuevo gasto</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.fabOption}
+                            onPress={() => {
+                                setOpcionesVisibles(false);
+                                navigation.navigate('DesgloseGastos', { grupo: grupoActual });
+                            }}>
+                            <Text>Desglose de gastos</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.fabOption}
+                            onPress={() => {
+                                setOpcionesVisibles(false);
+                                navigation.navigate('Invitar', { grupo: grupoActual });
+                            }}>
+                            <Text>Invitar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.fabOption}
+                            onPress={() => {
+                                setOpcionesVisibles(false);
+                                navigation.navigate('AjustarCuentas', {
+                                    grupo: grupoActual,
+                                    saldos,
+                                });
+                            }}
+                        >
+                            <Text>Ajustar cuentas</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.fabOption}
+                            onPress={async () => {
+                                await salirDeGrupo(grupoActual._id);
+                                setOpcionesVisibles(false);
+                                navigation.navigate('Home');
+                            }}>
+                            <Text style={{ color: 'red' }}>Salir del grupo</Text>
+                        </TouchableOpacity>
+
                     </View>
                 )}
-            />
-
-            {/* Botón flotante */}
-            <TouchableOpacity
-                style={styles.fab}
-                onPress={() => setOpcionesVisibles(!opcionesVisibles)}
-            >
-                <Ionicons name="add" size={32} color="white" />
-            </TouchableOpacity>
-            {opcionesVisibles && (
-                <View style={styles.fabOptions}>
-                    <TouchableOpacity
-                        style={styles.fabOption}
-                        onPress={() => {
-                            setOpcionesVisibles(false);
-                            navigation.navigate('AgregarPersona', { grupo: grupoActual });
-                        }}>
-                        <Text>Añadir persona</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.fabOption}
-                        onPress={() => {
-                            setOpcionesVisibles(false);
-                            navigation.navigate('NuevoGasto', { grupo: grupoActual });
-                        }}>
-                        <Text>Nuevo gasto</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.fabOption}
-                        onPress={() => {
-                            setOpcionesVisibles(false);
-                            navigation.navigate('DesgloseGastos', { grupo: grupoActual });
-                        }}>
-                        <Text>Desglose de gastos</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.fabOption}
-                        onPress={() => {
-                            setOpcionesVisibles(false);
-                            navigation.navigate('Invitar', { grupo: grupoActual });
-                        }}>
-                        <Text>Invitar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.fabOption}
-                        onPress={() => {
-                            setOpcionesVisibles(false);
-                            navigation.navigate('AjustarCuentas', {
-                                grupo: grupoActual,
-                                saldos,
-                            });
-                        }}
-                    >
-                        <Text>Ajustar cuentas</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.fabOption}
-                        onPress={async () => {
-                            await salirDeGrupo(grupoActual._id);
-                            setOpcionesVisibles(false);
-                            navigation.navigate('Home');
-                        }}>
-                        <Text style={{ color: 'red' }}>Salir del grupo</Text>
-                    </TouchableOpacity>
-
-                </View>
-            )}
-        </View>
+                </AppBackground>
+            </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: '#fff' },
     container: { flex: 1, padding: 20, backgroundColor: '#fff' },
     title: { fontSize: 24, fontWeight: 'bold', marginBottom: 4 },
     subtitle: { fontSize: 16, color: '#666', marginBottom: 20 },
@@ -176,7 +170,7 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         right: 30,
-        bottom: 30,
+        bottom: 50, 
         backgroundColor: '#42a5f5',
         width: 60,
         height: 60,
@@ -184,17 +178,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
-        zIndex: 20,
+        zIndex: 20
     },
     fabOptions: {
         position: 'absolute',
         right: 30,
-        bottom: 100,
+        bottom: 120,
         backgroundColor: '#fff',
         borderRadius: 12,
         padding: 10,
-        elevation: 6,
-        zIndex: 21,
+        elevation: 6
     },
     fabOption: {
         padding: 10,

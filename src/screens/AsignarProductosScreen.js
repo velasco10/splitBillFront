@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Button } from 'react-native';
+import AppBackground from '../components/AppBackground';
 
 export default function AsignarProductosScreen({ route, navigation }) {
   // Recibe los productos y personas por params

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { API_URL } from '../config';
 import { Ionicons } from '@expo/vector-icons';
+import AppBackground from '../components/AppBackground';
 
 function simplificarPagos(saldos) {
     const positivos = [];
@@ -67,45 +68,46 @@ export default function AjustarCuentasScreen({ route, navigation }) {
         setSeleccionados([]);
         navigation.goBack();
     };
-    
+
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Pagos para ajustar cuentas:</Text>
-            {pagos.length === 0 ? (
-                <Text style={styles.noDebt}>No hay deudas pendientes</Text>
-            ) : (
-                <FlatList
-                    data={pagos}
-                    keyExtractor={(item, idx) => idx.toString()}
-                    renderItem={({ item, index }) => (
-                        <View style={[
-                            styles.card,
-                            seleccionados.includes(index) && { backgroundColor: '#e0f7fa' }
-                        ]}>
-                            <Ionicons name="cash-outline" size={24} color="#42a5f5" style={{ marginRight: 10 }} />
-<Text style={styles.cardText}>
-                                <Text style={styles.nombre}>{item.de}</Text> → <Text style={styles.nombre}>{item.a}</Text> por <Text style={styles.monto}>{item.monto}€</Text>
-                            </Text>
-                            <TouchableOpacity onPress={() => toggleSeleccion(index)}>
-                                <Ionicons
-                                    name={seleccionados.includes(index) ? 'checkmark-circle' : 'arrow-forward-circle'}
-                                    size={28}
-                                    color={seleccionados.includes(index) ? '#4caf50' : '#ccc'}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    )}
+            <AppBackground>
+                <Text style={styles.title}>Pagos para ajustar cuentas:</Text>
+                {pagos.length === 0 ? (
+                    <Text style={styles.noDebt}>No hay deudas pendientes</Text>
+                ) : (
+                    <FlatList
+                        data={pagos}
+                        keyExtractor={(item, idx) => idx.toString()}
+                        renderItem={({ item, index }) => (
+                            <View style={[
+                                styles.card,
+                                seleccionados.includes(index) && { backgroundColor: '#e0f7fa' }
+                            ]}>
+                                <Ionicons name="cash-outline" size={24} color="#42a5f5" style={{ marginRight: 10 }} />
+                                <Text style={styles.cardText}>
+                                    <Text style={styles.nombre}>{item.de}</Text> → <Text style={styles.nombre}>{item.a}</Text> por <Text style={styles.monto}>{item.monto}€</Text>
+                                </Text>
+                                <TouchableOpacity onPress={() => toggleSeleccion(index)}>
+                                    <Ionicons
+                                        name={seleccionados.includes(index) ? 'checkmark-circle' : 'arrow-forward-circle'}
+                                        size={28}
+                                        color={seleccionados.includes(index) ? '#4caf50' : '#ccc'}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    />
+
+
+                )}
+                <Button
+                    title="Guardar pagos"
+                    onPress={registrarPagosSeleccionados}
+                    disabled={seleccionados.length === 0}
                 />
-
-
-            )}
-            <Button
-                title="Guardar pagos"
-                onPress={registrarPagosSeleccionados}
-                disabled={seleccionados.length === 0}
-            />
-
+            </AppBackground>
         </View>
     );
 }

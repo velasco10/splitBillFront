@@ -15,23 +15,28 @@ import CamaraScreen from './src/screens/CamaraScreen';
 import AsignarProductosScreen from './src/screens/AsignarProductosScreen';
 import TotalesPorPersona from './src/screens/TotalesPorPersona';
 import AjustarCuentasScreen from './src/screens/AjustarCuentasScreen';
+import CustomHeader from './src/components/CustomHeader'; // <-- Importa tu componente
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'SplitBill' }} />
-        <Stack.Screen name="CrearGrupo" component={CrearGrupoScreen} options={{ title: 'Crear Grupo' }} />
-        <Stack.Screen name="DetalleGrupo" component={DetalleGrupoScreen} options={{ title: 'Detalle Grupo' }} />
-        <Stack.Screen name="NuevoGasto" component={NuevoGastoScreen} options={{ title: 'Nuevo Gasto' }} />
-        <Stack.Screen name="DesgloseGastos" component={DesgloseGastosScreen} options={{ title: 'Desglose de gastos' }} />
-        <Stack.Screen name="DetalleGasto" component={DetalleGastoScreen} options={{ title: 'Detalle del gasto' }} />
-        <Stack.Screen name="UnirseGrupo" component={UnirseGrupoScreen} options={{ title: 'Unirse a grupo' }} />
-        <Stack.Screen name="Invitar" component={InvitarScreen} options={{ title: 'Invitar al grupo' }} />
-        <Stack.Screen name="AgregarPersona" component={AgregarPersonaScreen} options={{ title: 'Añadir persona' }} />
-        <Stack.Screen name="AgregarPersonas" component={AgregarPersonasScreen} options={{ title: 'Añadir personas' }} />
+      <Stack.Navigator
+        screenOptions={{
+          header: () => <CustomHeader />, 
+        }}
+      >
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="CrearGrupo" component={CrearGrupoScreen} />
+        <Stack.Screen name="DetalleGrupo" component={DetalleGrupoScreen} />
+        <Stack.Screen name="NuevoGasto" component={NuevoGastoScreen} />
+        <Stack.Screen name="DesgloseGastos" component={DesgloseGastosScreen} />
+        <Stack.Screen name="DetalleGasto" component={DetalleGastoScreen} />
+        <Stack.Screen name="UnirseGrupo" component={UnirseGrupoScreen} />
+        <Stack.Screen name="Invitar" component={InvitarScreen} />
+        <Stack.Screen name="AgregarPersona" component={AgregarPersonaScreen} />
+        <Stack.Screen name="AgregarPersonas" component={AgregarPersonasScreen} />
         <Stack.Screen name="CamaraScreen" component={CamaraScreen} />
         <Stack.Screen name="AsignarProductosScreen" component={AsignarProductosScreen} />
         <Stack.Screen name="TotalesPorPersona" component={TotalesPorPersona} />

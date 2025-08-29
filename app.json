@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "billary",
+    "name": "Billary",
     "slug": "splitBillFront",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/billary-icon.png",
     "userInterfaceStyle": "light",
@@ -25,7 +25,7 @@
         "android.permission.CAMERA"
       ],
       "package": "com.velascode.splitBillFront",
-      "versionCode":3
+      "versionCode":5
     },
     "web": {
       "favicon": "./assets/billary-icon.png"

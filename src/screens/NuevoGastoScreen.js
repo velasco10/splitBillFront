@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
 import { API_URL } from '../config';
+import AppBackground from '../components/AppBackground';
 
 export default function NuevoGastoScreen({ route, navigation }) {
   const { grupo } = route.params;
@@ -42,59 +43,65 @@ export default function NuevoGastoScreen({ route, navigation }) {
   return (
     <Provider>
       <View style={styles.container}>
-        <Text style={styles.title}>Nuevo Gasto</Text>
-        <TextInput
-          placeholder="Importe (€)"
-          style={styles.input}
-          value={importe}
-          onChangeText={setImporte}
-          keyboardType="decimal-pad"
-        />
-        <TextInput
-          placeholder="Concepto"
-          style={styles.input}
-          value={concepto}
-          onChangeText={setConcepto}
-        />
-        <Text style={styles.label}>De:</Text>
-        <Menu
-          visible={menuVisible}
-          onDismiss={closeMenu}
-          anchor={
-            <TouchableOpacity onPress={openMenu} style={styles.dropdown}>
-              <Text style={{ fontSize: 16 }}>{emisor}</Text>
-            </TouchableOpacity>
-          }
-        >
-          {grupo.miembros.map(m => (
-            <Menu.Item
-              onPress={() => {
-                setEmisor(m);
-                closeMenu();
-              }}
-              title={m}
-              key={m}
-            />
-          ))}
-        </Menu>
+        <AppBackground>
+          <Text style={styles.title}>Nuevo Gasto</Text>
+          <TextInput
+            placeholder="Importe (€)"
+            placeholderTextColor="#6B7280"
+            style={styles.input}
+            value={importe}
+            onChangeText={setImporte}
+            keyboardType="decimal-pad"
+            underlineColorAndroid="transparent"
+          />
+          <TextInput
+            placeholder="Concepto"
+            placeholderTextColor="#6B7280"
+            style={styles.input}
+            value={concepto}
+            onChangeText={setConcepto}
+            underlineColorAndroid="transparent"
+          />
+          <Text style={styles.label}>De:</Text>
+          <Menu
+            visible={menuVisible}
+            onDismiss={closeMenu}
+            anchor={
+              <TouchableOpacity onPress={openMenu} style={styles.dropdown}>
+                <Text style={{ fontSize: 16 }}>{emisor}</Text>
+              </TouchableOpacity>
+            }
+          >
+            {grupo.miembros.map(m => (
+              <Menu.Item
+                onPress={() => {
+                  setEmisor(m);
+                  closeMenu();
+                }}
+                title={m}
+                key={m}
+              />
+            ))}
+          </Menu>
 
-        <Text style={styles.label}>Para:</Text>
-        <View style={styles.row}>
-          {grupo.miembros.map(m => (
-            <TouchableOpacity
-              key={m}
-              onPress={() => toggleBeneficiario(m)}
-              style={[styles.selector, beneficiarios.includes(m) && styles.selectorSelected]}
-            >
-              <Text>{m}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Button
-          title="Guardar gasto"
-          onPress={guardarGasto}
-          disabled={!importe || !concepto || !emisor || beneficiarios.length === 0}
-        />
+          <Text style={styles.label}>Para:</Text>
+          <View style={styles.row}>
+            {grupo.miembros.map(m => (
+              <TouchableOpacity
+                key={m}
+                onPress={() => toggleBeneficiario(m)}
+                style={[styles.selector, beneficiarios.includes(m) && styles.selectorSelected]}
+              >
+                <Text>{m}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Button
+            title="Guardar gasto"
+            onPress={guardarGasto}
+            disabled={!importe || !concepto || !emisor || beneficiarios.length === 0}
+          />
+        </AppBackground>
       </View>
     </Provider>
   );
@@ -103,7 +110,15 @@ export default function NuevoGastoScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-  input: { marginBottom: 16 },
+  input: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#42a5f5',
+    marginBottom: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 0,
+    fontSize: 16,
+    backgroundColor: 'transparent',
+  },
   label: { fontWeight: 'bold', marginTop: 12, marginBottom: 6, fontSize: 16 },
   dropdown: {
     borderBottomWidth: 2,

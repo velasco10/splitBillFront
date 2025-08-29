@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { API_URL } from '../config';
+import AppBackground from '../components/AppBackground';
 
 export default function DesgloseGastosScreen({ route, navigation }) {
   const { grupo } = route.params;
@@ -17,27 +18,29 @@ export default function DesgloseGastosScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Desglose de gastos</Text>
-      <View style={styles.headerRow}>
-        <Text style={[styles.cell, { flex: 2, fontWeight: 'bold' }]}>Concepto</Text>
-        <Text style={[styles.cell, { flex: 1, fontWeight: 'bold', textAlign: 'right' }]}>Importe (€)</Text>
-        <Text style={[styles.cell, { flex: 1, fontWeight: 'bold', textAlign: 'right' }]}>Pagó</Text>
-      </View>
-      <FlatList
-        data={gastos}
-        keyExtractor={item => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => navigation.navigate('DetalleGasto', { gasto: item })}
-          >
-            <Text style={[styles.cell, { flex: 2 }]}>{item.concepto}</Text>
-            <Text style={[styles.cell, { flex: 1, textAlign: 'right' }]}>{item.importe}</Text>
-            <Text style={[styles.cell, { flex: 1, textAlign: 'right' }]}>{item.emisor}</Text>
-          </TouchableOpacity>
-        )}
-        ListEmptyComponent={<Text style={{ marginTop: 16 }}>Sin gastos registrados.</Text>}
-      />
+      <AppBackground>
+        <Text style={styles.title}>Desglose de gastos</Text>
+        <View style={styles.headerRow}>
+          <Text style={[styles.cell, { flex: 2, fontWeight: 'bold' }]}>Concepto</Text>
+          <Text style={[styles.cell, { flex: 1, fontWeight: 'bold', textAlign: 'right' }]}>Importe (€)</Text>
+          <Text style={[styles.cell, { flex: 1, fontWeight: 'bold', textAlign: 'right' }]}>Pagó</Text>
+        </View>
+        <FlatList
+          data={gastos}
+          keyExtractor={item => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => navigation.navigate('DetalleGasto', { gasto: item })}
+            >
+              <Text style={[styles.cell, { flex: 2 }]}>{item.concepto}</Text>
+              <Text style={[styles.cell, { flex: 1, textAlign: 'right' }]}>{item.importe}</Text>
+              <Text style={[styles.cell, { flex: 1, textAlign: 'right' }]}>{item.emisor}</Text>
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={<Text style={{ marginTop: 16 }}>Sin gastos registrados.</Text>}
+        />
+      </AppBackground>
     </View>
   );
 }

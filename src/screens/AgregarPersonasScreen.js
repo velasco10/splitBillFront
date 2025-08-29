@@ -9,6 +9,7 @@ import {
   StyleSheet
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AppBackground from '../components/AppBackground';
 
 export default function AgregarPersonasScreen({ route, navigation }) {
   const { lineas } = route.params;
@@ -38,6 +39,7 @@ export default function AgregarPersonasScreen({ route, navigation }) {
       <View style={styles.row}>
         <TextInput
           placeholder="Nombre"
+          placeholderTextColor="#6B7280"
           style={[styles.input, { flex: 1 }]}
           value={nombre}
           onChangeText={setNombre}

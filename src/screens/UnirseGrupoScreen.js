@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { guardarGrupoUnido } from '../utils/localGroups';
+import AppBackground from '../components/AppBackground';
 
 export default function UnirseGrupoScreen({ navigation }) {
   const [codigo, setCodigo] = useState('');
@@ -14,14 +15,17 @@ export default function UnirseGrupoScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Unirse a un grupo</Text>
-      <TextInput
-        placeholder="Introduce código del grupo"
-        style={styles.input}
-        value={codigo}
-        onChangeText={setCodigo}
-      />
-      <Button title="Unirse" onPress={unirseManual} disabled={!codigo} />
+      <AppBackground>
+        <Text style={styles.title}>Unirse a un grupo</Text>
+        <TextInput
+          placeholder="Introduce código del grupo"
+          placeholderTextColor="#6B7280"
+          style={styles.input}
+          value={codigo}
+          onChangeText={setCodigo}
+        />
+        <Button title="Unirse" onPress={unirseManual} disabled={!codigo} />
+      </AppBackground>
     </View>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Switch, Alert } from 'react-native';
 import { API_URL } from '../config';
+import AppBackground from '../components/AppBackground';
 
 export default function AgregarPersonaScreen({ route, navigation }) {
     const { grupo } = route.params;
@@ -34,9 +35,11 @@ export default function AgregarPersonaScreen({ route, navigation }) {
 
     return (
         <View style={styles.container}>
+            <AppBackground>
             <Text style={styles.title}>Añadir persona</Text>
             <TextInput
                 placeholder="Nombre del nuevo miembro"
+                placeholderTextColor="#6B7280"
                 style={styles.input}
                 value={nombre}
                 onChangeText={setNombre}
@@ -50,6 +53,7 @@ export default function AgregarPersonaScreen({ route, navigation }) {
                 onPress={agregarPersona}
                 disabled={!nombre}
             />
+            </AppBackground>
         </View>
     );
 }
