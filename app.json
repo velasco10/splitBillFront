@@ -7,6 +7,7 @@
     "icon": "./assets/billary-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "splitbill",
     "splash": {
       "image": "./assets/billary-icon.png",
       "resizeMode": "contain",
@@ -32,7 +33,14 @@
     },
     "plugins": [
       "expo-secure-store",
-      "expo-build-properties"
+      "expo-build-properties",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.velascode.splitbill",
+          "enableGooglePay": false
+        }
+      ]
     ],
     "extra": {
       "eas": {

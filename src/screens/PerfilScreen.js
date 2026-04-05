@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView,
-  TouchableOpacity, Alert, ScrollView
+  View, Text, StyleSheet, SafeAreaView, AppState, Linking,
+  TouchableOpacity, Alert, ScrollView, ActivityIndicator, Linking
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../utils/authContext';
@@ -12,6 +12,8 @@ const SCANS_FREE_MES = 5;
 
 export default function PerfilScreen({ navigation }) {
   const { usuario, token, login, logout } = useAuth();
+  const [cargandoPago, setCargandoPago] = useState(false);
+  const [cancelando, setCancelando] = useState(false);
 
   useEffect(() => {
     if (usuario && token) {
@@ -23,6 +25,25 @@ export default function PerfilScreen({ navigation }) {
         .catch(console.error);
     }
   }, []);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', async (nextState) => {
+      if (nextState === 'active' && usuario && token) {
+        try {
+          const res = await fetch(`${API_URL}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const u = await res.json();
+            await login(token, u);
+          }
+        } catch (e) {
+          console.error('Error refrescando usuario:', e);
+        }
+      }
+    });
+    return () => subscription.remove();
+  }, [usuario, token]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -43,8 +64,77 @@ export default function PerfilScreen({ navigation }) {
     );
   };
 
-  const scansUsados    = usuario?.scans_mes || 0;
-  const esPremium      = usuario?.plan === 'premium';
+  const handleHacersePremium = async () => {
+    if (!usuario) {
+      Alert.alert('Inicia sesión', 'Necesitas una cuenta para suscribirte al plan Premium.');
+      navigation.navigate('Login');
+      return;
+    }
+
+    setCargandoPago(true);
+    try {
+      const res = await fetch(`${API_URL}/stripe/crear_suscripcion`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.detail || 'Error al crear la suscripción');
+
+      // Abre la URL de Stripe Checkout en el navegador
+      await Linking.openURL(data.url);
+
+    } catch (e) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setCargandoPago(false);
+    }
+  };
+
+  const handleCancelarSuscripcion = () => {
+    Alert.alert(
+      'Cancelar suscripción',
+      'Tu plan Premium se mantendrá activo hasta el final del período de facturación actual. ¿Seguro que quieres cancelar?',
+      [
+        { text: 'Mantener Premium', style: 'cancel' },
+        {
+          text: 'Cancelar suscripción',
+          style: 'destructive',
+          onPress: async () => {
+            setCancelando(true);
+            try {
+              const res = await fetch(`${API_URL}/stripe/cancelar`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.detail || 'Error al cancelar');
+              Alert.alert('Suscripción cancelada', 'Tu plan Premium seguirá activo hasta el final del período actual.');
+              // Refrescar usuario
+              const resMe = await fetch(`${API_URL}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              if (resMe.ok) {
+                const u = await resMe.json();
+                await login(token, u);
+              }
+            } catch (e) {
+              Alert.alert('Error', e.message);
+            } finally {
+              setCancelando(false);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const scansUsados = usuario?.scans_mes || 0;
+  const esPremium = usuario?.plan === 'premium';
   const scansRestantes = esPremium ? null : SCANS_FREE_MES - scansUsados;
 
   return (
@@ -121,9 +211,8 @@ export default function PerfilScreen({ navigation }) {
                 <Text style={styles.planNombre}>Free</Text>
                 <Text style={styles.planPrecio}>Gratis</Text>
               </View>
-              <Text style={styles.planFeature}>✓ Grupos ilimitados</Text>
+              <Text style={styles.planFeature}>✓ Hasta 4 grupos</Text>
               <Text style={styles.planFeature}>✓ Registro de gastos</Text>
-              <Text style={styles.planFeature}>✓ Estadísticas básicas</Text>
               <Text style={styles.planFeature}>✓ 5 scans de ticket al mes</Text>
               {!esPremium && (
                 <View style={styles.planActualBadge}>
@@ -141,22 +230,42 @@ export default function PerfilScreen({ navigation }) {
                 </View>
                 <Text style={styles.planPrecio}>1.99€/mes</Text>
               </View>
-              <Text style={styles.planFeature}>✓ Todo lo del plan Free</Text>
+              <Text style={styles.planFeature}>✓ Grupos ilimitados</Text>
               <Text style={styles.planFeature}>✓ Scans ilimitados</Text>
-              <Text style={styles.planFeature}>✓ Sin anuncios</Text>
               <Text style={styles.planFeature}>✓ Estadísticas avanzadas</Text>
-              <Text style={styles.planFeature}>✓ Pagos programados (próximamente)</Text>
+              <Text style={styles.planFeature}>✓ Plantillas de división</Text>
+              <Text style={styles.planFeature}>✓ Pagos programados</Text>
+              <Text style={styles.planFeature}>✓ Sin anuncios</Text>
 
               {esPremium ? (
-                <View style={styles.planActualBadge}>
-                  <Text style={styles.planActualText}>Plan actual</Text>
-                </View>
+                <>
+                  <View style={styles.planActualBadge}>
+                    <Text style={styles.planActualText}>Plan actual</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.btnCancelar}
+                    onPress={handleCancelarSuscripcion}
+                    disabled={cancelando}
+                  >
+                    {cancelando
+                      ? <ActivityIndicator size="small" color="#e74c3c" />
+                      : <Text style={styles.btnCancelarText}>Cancelar suscripción</Text>
+                    }
+                  </TouchableOpacity>
+                </>
               ) : (
                 <TouchableOpacity
-                  style={styles.btnPremium}
-                  onPress={() => Alert.alert('Próximamente', 'El pago con Stripe estará disponible pronto.')}
+                  style={[styles.btnPremium, cargandoPago && { opacity: 0.7 }]}
+                  onPress={handleHacersePremium}
+                  disabled={cargandoPago}
                 >
-                  <Text style={styles.btnPremiumText}>Hazte Premium</Text>
+                  {cargandoPago
+                    ? <ActivityIndicator size="small" color="#fff" />
+                    : <>
+                      <Ionicons name="star" size={16} color="#fff" style={{ marginRight: 6 }} />
+                      <Text style={styles.btnPremiumText}>Hazte Premium — 1.99€/mes</Text>
+                    </>
+                  }
                 </TouchableOpacity>
               )}
             </View>
@@ -193,7 +302,7 @@ export default function PerfilScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea:  { flex: 1, backgroundColor: '#fff' },
+  safeArea: { flex: 1, backgroundColor: '#fff' },
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
 
   headerRow: {
@@ -208,49 +317,59 @@ const styles = StyleSheet.create({
     backgroundColor: '#eff6ff', justifyContent: 'center',
     alignItems: 'center', marginBottom: 12,
   },
-  nombre:           { fontSize: 20, fontWeight: '700', color: '#111' },
-  email:            { fontSize: 14, color: '#888', marginTop: 4 },
+  nombre: { fontSize: 20, fontWeight: '700', color: '#111' },
+  email: { fontSize: 14, color: '#888', marginTop: 4 },
   planBadge: {
     flexDirection: 'row', alignItems: 'center',
     marginTop: 10, paddingHorizontal: 12, paddingVertical: 4,
     borderRadius: 20, backgroundColor: '#eff6ff',
     borderWidth: 1, borderColor: '#42a5f5',
   },
-  planBadgePremium:     { backgroundColor: '#f59e0b', borderColor: '#f59e0b' },
-  planBadgeText:        { fontSize: 13, color: '#42a5f5', fontWeight: '600' },
+  planBadgePremium: { backgroundColor: '#f59e0b', borderColor: '#f59e0b' },
+  planBadgeText: { fontSize: 13, color: '#42a5f5', fontWeight: '600' },
   planBadgeTextPremium: { color: '#fff' },
 
-  seccion:      { marginBottom: 24 },
+  seccion: { marginBottom: 24 },
   seccionTitle: { fontSize: 16, fontWeight: '700', color: '#333', marginBottom: 12 },
 
-  scansCard:      { backgroundColor: '#f8f9fa', borderRadius: 12, padding: 16, alignItems: 'center' },
-  scansRow:       { flexDirection: 'row', alignItems: 'baseline', marginBottom: 10 },
-  scansNumero:    { fontSize: 36, fontWeight: 'bold', color: '#2563eb' },
-  scansDe:        { fontSize: 18, color: '#888', marginLeft: 4 },
-  barraFondo:     { width: '100%', height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
-  barraRelleno:   { height: 8, backgroundColor: '#42a5f5', borderRadius: 4 },
-  scansTexto:     { fontSize: 13, color: '#888' },
+  scansCard: { backgroundColor: '#f8f9fa', borderRadius: 12, padding: 16, alignItems: 'center' },
+  scansRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 10 },
+  scansNumero: { fontSize: 36, fontWeight: 'bold', color: '#2563eb' },
+  scansDe: { fontSize: 18, color: '#888', marginLeft: 4 },
+  barraFondo: { width: '100%', height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
+  barraRelleno: { height: 8, backgroundColor: '#42a5f5', borderRadius: 4 },
+  scansTexto: { fontSize: 13, color: '#888' },
   scansIlimitado: { fontSize: 16, fontWeight: '600', color: '#42a5f5', marginTop: 8 },
 
-  planCard:        { backgroundColor: '#f8f9fa', borderRadius: 14, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#e5e7eb' },
-  planCardActivo:  { borderColor: '#42a5f5', borderWidth: 2 },
+  planCard: { backgroundColor: '#f8f9fa', borderRadius: 14, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#e5e7eb' },
+  planCardActivo: { borderColor: '#42a5f5', borderWidth: 2 },
   planCardPremium: { backgroundColor: '#fffbeb', borderColor: '#fde68a' },
-  planHeader:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  planNombreRow:   { flexDirection: 'row', alignItems: 'center' },
-  planNombre:      { fontSize: 16, fontWeight: '700', color: '#111' },
-  planPrecio:      { fontSize: 15, fontWeight: '700', color: '#2563eb' },
-  planFeature:     { fontSize: 13, color: '#555', marginBottom: 4 },
+  planHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  planNombreRow: { flexDirection: 'row', alignItems: 'center' },
+  planNombre: { fontSize: 16, fontWeight: '700', color: '#111' },
+  planPrecio: { fontSize: 15, fontWeight: '700', color: '#2563eb' },
+  planFeature: { fontSize: 13, color: '#555', marginBottom: 4 },
   planActualBadge: { marginTop: 10, backgroundColor: '#42a5f5', borderRadius: 8, padding: 6, alignItems: 'center' },
-  planActualText:  { color: '#fff', fontSize: 12, fontWeight: '700' },
+  planActualText: { color: '#fff', fontSize: 12, fontWeight: '700' },
 
-  btnPremium:     { marginTop: 12, backgroundColor: '#f59e0b', borderRadius: 10, padding: 12, alignItems: 'center' },
+  btnPremium: {
+    marginTop: 12, backgroundColor: '#f59e0b',
+    borderRadius: 10, padding: 12,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+  },
   btnPremiumText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 
-  infoCard:  { backgroundColor: '#f8f9fa', borderRadius: 12, padding: 14 },
-  infoRow:   { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  btnCancelar: {
+    marginTop: 10, borderRadius: 10, padding: 10,
+    alignItems: 'center', borderWidth: 1, borderColor: '#fca5a5',
+  },
+  btnCancelarText: { color: '#e74c3c', fontSize: 13, fontWeight: '600' },
+
+  infoCard: { backgroundColor: '#f8f9fa', borderRadius: 12, padding: 14 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   infoLabel: { flex: 1, fontSize: 14, color: '#888' },
   infoValor: { fontSize: 14, fontWeight: '600', color: '#333' },
 
-  btnLogout:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff1f0', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#fca5a5' },
+  btnLogout: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff1f0', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#fca5a5' },
   btnLogoutText: { color: '#e74c3c', fontWeight: '700', fontSize: 15 },
 });
