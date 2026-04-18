@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, AppState, Linking,
-  TouchableOpacity, Alert, ScrollView, ActivityIndicator, Linking
+  TouchableOpacity, Alert, ScrollView, ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../utils/authContext';

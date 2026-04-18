@@ -23,6 +23,8 @@ import LoginScreen from './src/screens/LoginScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
 import PagosProgamadosScreen from './src/screens/PagosProgamadosScreen';
 import NuevoPagoProgramadoScreen from './src/screens/NuevoPagoProgramadoScreen';
+import PresupuestoScreen from './src/screens/PresupuestoScreen';
+
 import { API_URL } from './src/config';
 
 const Stack = createNativeStackNavigator();
@@ -107,25 +109,26 @@ function AppNavigator() {
         header: () => <CustomHeader />
       }}
     >
-      <Stack.Screen name="Home"                  component={HomeScreen} />
-      <Stack.Screen name="CrearGrupo"            component={CrearGrupoScreen} />
-      <Stack.Screen name="DetalleGrupo"          component={DetalleGrupoScreen} />
-      <Stack.Screen name="NuevoGasto"            component={NuevoGastoScreen} />
-      <Stack.Screen name="DesgloseGastos"        component={DesgloseGastosScreen} />
-      <Stack.Screen name="DetalleGasto"          component={DetalleGastoScreen} />
-      <Stack.Screen name="UnirseGrupo"           component={UnirseGrupoScreen} />
-      <Stack.Screen name="Invitar"               component={InvitarScreen} />
-      <Stack.Screen name="AgregarPersona"        component={AgregarPersonaScreen} />
-      <Stack.Screen name="AgregarPersonas"       component={AgregarPersonasScreen} />
-      <Stack.Screen name="CamaraScreen"          component={CamaraScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="CrearGrupo" component={CrearGrupoScreen} />
+      <Stack.Screen name="DetalleGrupo" component={DetalleGrupoScreen} />
+      <Stack.Screen name="NuevoGasto" component={NuevoGastoScreen} />
+      <Stack.Screen name="DesgloseGastos" component={DesgloseGastosScreen} />
+      <Stack.Screen name="DetalleGasto" component={DetalleGastoScreen} />
+      <Stack.Screen name="UnirseGrupo" component={UnirseGrupoScreen} />
+      <Stack.Screen name="Invitar" component={InvitarScreen} />
+      <Stack.Screen name="AgregarPersona" component={AgregarPersonaScreen} />
+      <Stack.Screen name="AgregarPersonas" component={AgregarPersonasScreen} />
+      <Stack.Screen name="CamaraScreen" component={CamaraScreen} />
       <Stack.Screen name="AsignarProductosScreen" component={AsignarProductosScreen} />
-      <Stack.Screen name="TotalesPorPersona"     component={TotalesPorPersona} />
-      <Stack.Screen name="AjustarCuentas"        component={AjustarCuentasScreen} />
-      <Stack.Screen name="Estadisticas"          component={EstadisticasScreen} />
-      <Stack.Screen name="Login"                 component={LoginScreen} />
-      <Stack.Screen name="Perfil"                component={PerfilScreen} />
-      <Stack.Screen name="PagosProgramados"      component={PagosProgamadosScreen} />
-      <Stack.Screen name="NuevoPagoProgramado"   component={NuevoPagoProgramadoScreen} />
+      <Stack.Screen name="TotalesPorPersona" component={TotalesPorPersona} />
+      <Stack.Screen name="AjustarCuentas" component={AjustarCuentasScreen} />
+      <Stack.Screen name="Estadisticas" component={EstadisticasScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Perfil" component={PerfilScreen} />
+      <Stack.Screen name="PagosProgramados" component={PagosProgamadosScreen} />
+      <Stack.Screen name="NuevoPagoProgramado" component={NuevoPagoProgramadoScreen} />
+      <Stack.Screen name="Presupuesto" component={PresupuestoScreen} />
     </Stack.Navigator>
   );
 }
