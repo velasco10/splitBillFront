@@ -5,45 +5,37 @@ import {
 } from 'react-native';
 import { API_URL } from '../config';
 import AppBackground from '../components/AppBackground';
+import { useTheme } from '../utils/themeContext';
 
 export default function AgregarPersonaScreen({ route, navigation }) {
   const { grupo } = route.params;
-  const [nombre, setNombre] = useState('');
+  const { theme } = useTheme();
+  const [nombre, setNombre]               = useState('');
   const [entrarEnGastos, setEntrarEnGastos] = useState(false);
-  const [guardando, setGuardando] = useState(false);
+  const [guardando, setGuardando]         = useState(false);
 
   const agregarPersona = async () => {
     const nombreLimpio = nombre.trim();
-
-    // Validar duplicado en el front antes de llamar al back
     if (grupo.miembros?.includes(nombreLimpio)) {
       Alert.alert('Nombre repetido', `Ya existe un miembro llamado "${nombreLimpio}" en este grupo.`);
       return;
     }
-
     setGuardando(true);
     try {
-      // Usamos el endpoint específico de miembros que ya valida duplicados en el back
       const res = await fetch(`${API_URL}/grupos/${grupo._id}/miembros`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre: nombreLimpio }),
       });
-
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.detail || 'Error al añadir');
       }
-
-      // Si entra en gastos anteriores, recalculamos división de cada gasto
       if (entrarEnGastos) {
         const resGastos = await fetch(`${API_URL}/gastos/grupo/${grupo._id}`);
         const gastos = await resGastos.json();
-
-        // Para cada gasto, añadimos al nuevo miembro con división igualitaria recalculada
         await Promise.all(gastos.map(async (gasto) => {
-          if (gasto.modo_division !== 'igualitario') return; // Solo tocamos los igualitarios
-
+          if (gasto.modo_division !== 'igualitario') return;
           const miembrosActualizados = [...(gasto.division.map(d => d.nombre)), nombreLimpio];
           const parte = parseFloat((gasto.importe / miembrosActualizados.length).toFixed(2));
           const nuevaDivision = miembrosActualizados.map(n => ({
@@ -51,7 +43,6 @@ export default function AgregarPersonaScreen({ route, navigation }) {
             porcentaje: parseFloat((100 / miembrosActualizados.length).toFixed(2)),
             importe: parte,
           }));
-
           await fetch(`${API_URL}/gastos/${gasto._id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -59,7 +50,6 @@ export default function AgregarPersonaScreen({ route, navigation }) {
           });
         }));
       }
-
       Alert.alert('¡Listo!', `${nombreLimpio} añadido correctamente`);
       navigation.goBack();
     } catch (e) {
@@ -70,27 +60,26 @@ export default function AgregarPersonaScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.fondo }]}>
+      <View style={[styles.container, { backgroundColor: theme.fondo }]}>
         <AppBackground>
-          <Text style={styles.title}>Añadir persona</Text>
+          <Text style={[styles.title, { color: theme.texto }]}>Añadir persona</Text>
 
-          <Text style={styles.label}>Nombre</Text>
+          <Text style={[styles.label, { color: theme.texto }]}>Nombre</Text>
           <TextInput
             placeholder="Nombre del nuevo miembro"
-            placeholderTextColor="#6B7280"
-            style={styles.input}
+            placeholderTextColor={theme.textoTerciario}
+            style={[styles.input, { borderBottomColor: theme.primary, color: theme.texto }]}
             value={nombre}
             onChangeText={setNombre}
             autoCapitalize="words"
             returnKeyType="done"
           />
 
-          {/* Miembros actuales */}
           {grupo.miembros?.length > 0 && (
-            <View style={styles.miembrosActuales}>
-              <Text style={styles.miembrosLabel}>Miembros actuales:</Text>
-              <Text style={styles.miembrosTexto}>{grupo.miembros.join(', ')}</Text>
+            <View style={[styles.miembrosActuales, { backgroundColor: theme.fondoCard }]}>
+              <Text style={[styles.miembrosLabel, { color: theme.textoSecundario }]}>Miembros actuales:</Text>
+              <Text style={[styles.miembrosTexto, { color: theme.texto }]}>{grupo.miembros.join(', ')}</Text>
             </View>
           )}
 
@@ -98,24 +87,21 @@ export default function AgregarPersonaScreen({ route, navigation }) {
             <Switch
               value={entrarEnGastos}
               onValueChange={setEntrarEnGastos}
-              trackColor={{ true: '#42a5f5' }}
+              trackColor={{ true: theme.primary }}
             />
             <View style={{ marginLeft: 10, flex: 1 }}>
-              <Text style={styles.switchLabel}>Sumar a gastos anteriores</Text>
-              <Text style={styles.switchSub}>Solo afecta a gastos con división igualitaria</Text>
+              <Text style={[styles.switchLabel, { color: theme.texto }]}>Sumar a gastos anteriores</Text>
+              <Text style={[styles.switchSub, { color: theme.textoTerciario }]}>Solo afecta a gastos con división igualitaria</Text>
             </View>
           </View>
 
           <TouchableOpacity
-            style={[styles.btnGuardar, (!nombre.trim() || guardando) && styles.btnDesactivado]}
+            style={[styles.btnGuardar, { backgroundColor: theme.primary }, (!nombre.trim() || guardando) && { backgroundColor: theme.primaryBorder }]}
             onPress={agregarPersona}
             disabled={!nombre.trim() || guardando}
           >
-            <Text style={styles.btnGuardarText}>
-              {guardando ? 'Añadiendo...' : 'Añadir'}
-            </Text>
+            <Text style={styles.btnGuardarText}>{guardando ? 'Añadiendo...' : 'Añadir'}</Text>
           </TouchableOpacity>
-
         </AppBackground>
       </View>
     </SafeAreaView>
@@ -123,39 +109,17 @@ export default function AgregarPersonaScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea:  { flex: 1, backgroundColor: '#fff' },
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  safeArea:  { flex: 1 },
+  container: { flex: 1, padding: 20 },
   title:     { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-  label:     { fontWeight: '600', fontSize: 15, color: '#333', marginBottom: 6 },
-
-  input: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#42a5f5',
-    marginBottom: 16,
-    paddingVertical: 6,
-    fontSize: 16,
-    color: '#111',
-  },
-
-  miembrosActuales: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 16,
-  },
-  miembrosLabel: { fontSize: 13, color: '#888', marginBottom: 4 },
-  miembrosTexto: { fontSize: 14, color: '#333' },
-
-  switchRow:  { flexDirection: 'row', alignItems: 'center', marginBottom: 28 },
-  switchLabel: { fontSize: 15, fontWeight: '500', color: '#333' },
-  switchSub:   { fontSize: 12, color: '#aaa', marginTop: 2 },
-
-  btnGuardar: {
-    backgroundColor: '#42a5f5',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  btnDesactivado: { backgroundColor: '#b0d4f1' },
+  label:     { fontWeight: '600', fontSize: 15, marginBottom: 6 },
+  input:     { borderBottomWidth: 2, marginBottom: 16, paddingVertical: 6, fontSize: 16 },
+  miembrosActuales: { borderRadius: 10, padding: 12, marginBottom: 16 },
+  miembrosLabel:    { fontSize: 13, marginBottom: 4 },
+  miembrosTexto:    { fontSize: 14 },
+  switchRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: 28 },
+  switchLabel: { fontSize: 15, fontWeight: '500' },
+  switchSub:   { fontSize: 12, marginTop: 2 },
+  btnGuardar:     { borderRadius: 12, padding: 16, alignItems: 'center' },
   btnGuardarText: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });

@@ -19,6 +19,7 @@ import AjustarCuentasScreen from './src/screens/AjustarCuentasScreen';
 import CustomHeader from './src/components/CustomHeader';
 import EstadisticasScreen from './src/screens/EstadisticasScreen';
 import { AuthProvider, useAuth } from './src/utils/authContext';
+import { ThemeProvider } from './src/utils/themeContext';
 import LoginScreen from './src/screens/LoginScreen';
 import PerfilScreen from './src/screens/PerfilScreen';
 import PagosProgamadosScreen from './src/screens/PagosProgamadosScreen';
@@ -135,10 +136,12 @@ function AppNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
